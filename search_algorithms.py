@@ -2,6 +2,7 @@ from typing import TypeVar, Protocol, List, Dict, Tuple, Iterator, Optional
 from pprint import pprint
 import collections
 import heapq
+import math
 
 Position = TypeVar('Position')
 T = TypeVar('T')
@@ -285,13 +286,13 @@ diagram4.walls = [(1, 7), (1, 8), (2, 7), (2, 8), (3, 7), (3, 8), (30, 40), (30,
                   (17, 30),
                   (18, 30),
                   (19, 30)]
-diagram4.weights = {loc: 5 for loc in [(3, 4), (3, 5), (4, 1), (4, 2),
-                                       (4, 3), (4, 4), (4, 5), (4, 6),
-                                       (4, 7), (4, 8), (5, 1), (5, 2),
-                                       (5, 3), (5, 4), (5, 5), (5, 6),
-                                       (5, 7), (5, 8), (6, 2), (6, 3),
-                                       (6, 4), (6, 5), (6, 6), (6, 7),
-                                       (7, 3), (7, 4), (7, 5)]}
+# diagram4.weights = {loc: 5 for loc in [(3, 4), (3, 5), (4, 1), (4, 2),
+#                                        (4, 3), (4, 4), (4, 5), (4, 6),
+#                                        (4, 7), (4, 8), (5, 1), (5, 2),
+#                                        (5, 3), (5, 4), (5, 5), (5, 6),
+#                                        (5, 7), (5, 8), (6, 2), (6, 3),
+#                                        (6, 4), (6, 5), (6, 6), (6, 7),
+#                                        (7, 3), (7, 4), (7, 5)]}
 
 
 class PriorityQueue:
@@ -344,9 +345,20 @@ def reconstruct_path(came_from: Dict[Position, Position], start: Position, goal:
 
 
 def heuristic(a: GridLocation, b: GridLocation):
+    D = 1
+    D2 = 1
     (x1, y1) = a
     (x2, y2) = b
-    return abs(x1 - x2) + abs(y1 - y2)
+    dx = abs(x1 - x2)
+    dy = abs(y1 - y2)
+    # manhatten distance
+    return dx + dy
+
+    # euclidian distance
+    #return math.sqrt(dx**2 + dy**2)
+
+    # diagonal distance
+    #return (dx + dy) + (D2 - 2 * D) * min(dx, dy)
 
 
 def a_star_search_algorithm(graph: WeightedGrid, start, goal):
@@ -383,6 +395,7 @@ def implement_breadth_first_search():
     parents = breadth_first_search(g, start, goal)
     draw_grid(g, point_to=parents, start=start, goal=goal)
     draw_grid(g, path=reconstruct_path(parents, start=start, goal=goal))
+    print(parents)
 
 
 def implement_dijkstra_algorithm():
@@ -391,6 +404,7 @@ def implement_dijkstra_algorithm():
     came_from, cost_till_now = dijkstra_search(diagram4, start, goal)
     draw_grid(diagram4, point_to=came_from, start=start, goal=goal)
     draw_grid(diagram4, path=reconstruct_path(came_from, start=start, goal=goal))
+    pprint(cost_till_now)
 
 
 def implement_astar_algorithm():
@@ -398,3 +412,4 @@ def implement_astar_algorithm():
     came_from, cost_so_far = a_star_search_algorithm(diagram4, start, goal)
     draw_grid(diagram4, point_to=came_from, start=start, goal=goal)
     draw_grid(diagram4, path=reconstruct_path(came_from, start=start, goal=goal))
+    pprint(cost_so_far)
